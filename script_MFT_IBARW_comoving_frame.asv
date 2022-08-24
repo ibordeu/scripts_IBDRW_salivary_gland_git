@@ -14,7 +14,6 @@
 % For questions: ib443 (at) cam.ac.uk
 %--------------------------------------------------------------------------
 clear all;close all;clc;
-
 %% Parameters -------------------------------------------------------------
 % Mean-field parameters: 
 rbranch = 1; % branching-to-elongation rate ratio
@@ -39,9 +38,13 @@ a = zeros(Ly,Lx);
 a(:,1) = a_plus/10; % initialise with a perturbation at A(x=0)
 s = zeros(Ly,Lx);
 i = zeros(Ly,Lx);
-
-counter = 1; 
 %
+% Initialize figure
+f = figure;
+f.Position = [100 100 1700 600];
+set(gcf,'color','w');
+%
+counter = 1; 
 pos_front = [];
 % run for N_iters timesteps
 for niter = 1:N_iters
@@ -49,31 +52,25 @@ for niter = 1:N_iters
     phi = exp(rexp*dt*niter);
     % compute nabla^2 term for every field with appropriate boundary
     % conditions
-    nabla2A = diffusion2d_9pt(a,dx);    
-    nabla2I = diffusion2d_9pt(i,dx);  
-    nabla2T = diffusion2d_9pt(s,dx);  
+    nabla2A = diffusion2d_9pt(a,dx);     
     % First order integration
     a = a + dt*(nabla2A/phi^2 + rbranch*a.*(1-(a + i + s)) + rexp*s - h*a);
     s = s + dt*(rbranch*a.*(a + i + s) - (h + rexp).*s);
     i = i + dt*(a - rexp*i*(dim-1));
    
-    % plot profiles, scaled by the homogeneous steady state solution
-    if counter<=length(plot_times) && niter > plot_times(counter) 
+%    % plot profiles, scaled by the homogeneous steady state solution
+    if counter<=length(plot_times) && niter > plot_times(counter)
         counter = counter + 1;
         % Create figure object
-f = figure;
-f.Position = [100 100 1700 600];
-set(gcf,'color','w');
-refline(0,1)
-xlabel('x'); ylabel('Normalized density')
-axis([0 Lx 0 3])
-        
         plot(a((Ly+1)/2,:)./a_plus,'k-');
-        
+        hold on
         plot(s((Ly+1)/2,:)./s_plus,'k-.');
         plot(i((Ly+1)/2,:)./i_plus,'k--');
         hold off
-        legend({'a: Active tips','s: Inactive tips','i: Ducts'},'Location','SouthWest'); legend boxoff
+        refline(0,1)
+        axis([0 Lx 0 3])
+        xlabel('x'); ylabel('Normalized density')
+        legend({'a: Active tips','s: Inactive tips',' i: Ducts','Analytical steady state'},'Location','NorthEast'); legend boxoff
         pause(0.0001) 
     end
 end

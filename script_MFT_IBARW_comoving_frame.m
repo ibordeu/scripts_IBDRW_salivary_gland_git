@@ -52,14 +52,12 @@ for niter = 1:N_iters
     phi = exp(rexp*dt*niter);
     % compute nabla^2 term for every field with appropriate boundary
     % conditions
-    nabla2A = diffusion2d_9pt(a,dx);    
-    nabla2I = diffusion2d_9pt(i,dx);  
-    nabla2T = diffusion2d_9pt(s,dx);  
+    nabla2A = diffusion2d_9pt(a,dx);     
     % First order integration
     a = a + dt*(nabla2A/phi^2 + rbranch*a.*(1-(a + i + s)) + rexp*s - h*a);
     s = s + dt*(rbranch*a.*(a + i + s) - (h + rexp).*s);
     i = i + dt*(a - rexp*i*(dim-1));
-   
+    %
     % plot profiles, scaled by the homogeneous steady state solution
     if counter<=length(plot_times) && niter > plot_times(counter)
         counter = counter + 1;
@@ -78,7 +76,7 @@ for niter = 1:N_iters
 end
 
 % FUNCTIONS ---------------------------------------------------------------
-
+%
 function nabla2A = diffusion2d_9pt(A,dx)
 % input:
 % A: NxN array (field)
