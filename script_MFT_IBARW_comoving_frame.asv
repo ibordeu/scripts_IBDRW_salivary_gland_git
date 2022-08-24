@@ -14,6 +14,7 @@
 % For questions: ib443 (at) cam.ac.uk
 %--------------------------------------------------------------------------
 clear all;close all;clc;
+
 %% Parameters -------------------------------------------------------------
 % Mean-field parameters: 
 rbranch = 1; % branching-to-elongation rate ratio
@@ -38,13 +39,9 @@ a = zeros(Ly,Lx);
 a(:,1) = a_plus/10; % initialise with a perturbation at A(x=0)
 s = zeros(Ly,Lx);
 i = zeros(Ly,Lx);
-%
-% Initialize figure
-f = figure;
-f.Position = [100 100 1700 600];
-set(gcf,'color','w');
-%
+
 counter = 1; 
+%
 pos_front = [];
 % run for N_iters timesteps
 for niter = 1:N_iters
@@ -61,18 +58,22 @@ for niter = 1:N_iters
     i = i + dt*(a - rexp*i*(dim-1));
    
     % plot profiles, scaled by the homogeneous steady state solution
-    if counter<=length(plot_times) && niter > plot_times(counter)
+    if counter<=length(plot_times) && niter > plot_times(counter) 
         counter = counter + 1;
         % Create figure object
+f = figure;
+f.Position = [100 100 1700 600];
+set(gcf,'color','w');
+refline(0,1)
+xlabel('x'); ylabel('Normalized density')
+axis([0 Lx 0 3])
+        
         plot(a((Ly+1)/2,:)./a_plus,'k-');
-        hold on
+        
         plot(s((Ly+1)/2,:)./s_plus,'k-.');
         plot(i((Ly+1)/2,:)./i_plus,'k--');
         hold off
-        refline(0,1)
-        axis([0 Lx 0 3])
-        xlabel('x'); ylabel('Normalized density')
-        legend({'a: Active tips','s: Inactive tips',' i: Ducts','Analytical steady state'},'Location','NorthEast'); legend boxoff
+        legend({'a: Active tips','s: Inactive tips','i: Ducts'},'Location','SouthWest'); legend boxoff
         pause(0.0001) 
     end
 end

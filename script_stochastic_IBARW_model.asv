@@ -707,13 +707,8 @@ end
 end % rotate_3D
 
 function y  = laprnd(m, n, mu, sigma)
-%LAPRND generate i.i.d. random number drawn from Leplace distribution
+%LAPRND generate i.i.d. laplacian random number drawn from laplacian distribution
 %   with mean mu and standard deviation sigma. 
-%
-% Source: 
-% Elvis Chen (2022). Laplacian random number generator (https://www.mathworks.com/matlabcentral/fileexchange/13705-laplacian-random-number-generator), MATLAB Central File Exchange. Retrieved August 24, 2022.
-% 
-% Syntax
 %   mu      : mean
 %   sigma   : standard deviation
 %   [m, n]  : the dimension of y.
@@ -723,6 +718,7 @@ function y  = laprnd(m, n, mu, sigma)
 
 %   Author  : Elvis Chen (bee33@sjtu.edu.cn)
 %   Date    : 01/19/07
+
 %Check inputs
 if nargin < 2
     error('At least two inputs are required');
