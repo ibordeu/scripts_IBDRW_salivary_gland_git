@@ -39,9 +39,9 @@ boundary_type = 'open';
 n_reps = 1; % number of realisations
 
 % MODEL PARAMETERS
-sigma = 0.045; % R_branch: branching ratio
+sigma = 0.05; % R_branch: branching ratio
 expansion_rate = [0.006]; % R_exp: rate of expansion (h^-1)
-annihil_radius = 50; % R_a: annihilation radius (h^-1)
+annihil_radius = 45; % R_a: annihilation radius (h^-1)
 t_max = [84]; % maximum simuation time (h)
 % seed types: 
 %    'tree E14.5': initializes the system with E14.5 rudimentary trees
