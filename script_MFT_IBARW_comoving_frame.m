@@ -70,7 +70,7 @@ for niter = 1:N_iters
         refline(0,1)
         axis([0 Lx 0 3])
         xlabel('x'); ylabel('Normalized density')
-        legend({'a: Active tips','s: Inactive tips',' i: Ducts','Analytical steady state'},'Location','NorthEast'); legend boxoff
+        legend({'a: Active tips','s: Inactive tips',' i: Ducts','Homogeneous steady state (analytic solution)'},'Location','NorthEast'); legend boxoff
         pause(0.0001) 
     end
 end

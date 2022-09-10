@@ -30,7 +30,7 @@ clear all;close all;clc;
 %% Working directory
 % define a working directory to save output files (only used if save_files == 1)
 % in the form 'D:\Documents\BARW_model\sim_output\'
-work_path = '';
+work_path = '/Users/ibordeu/Documents/Cambridge/Salivary gland/scripts_IBARW_salivary_gland_git';
 save_files = 0; % set to 1 if want to save output files in work_path folder
 plot_over_time = 1; % set to 1 if want to plot simulation (set n_reps to 1)
 
@@ -166,7 +166,8 @@ for n_rep = 1:n_reps
             G = graph(edge_list_large(:,1),edge_list_large(:,2));
             h = plot(G,'-','NodeLabel',{},'Marker','none','EdgeColor','k');
             layout(h,'layered','sources',source_node);
-            ylabel('Tree level');
+            add_generations_to_tree(max_level)
+            ylabel('level i');
             box on
             pause(0.001)
         end
@@ -741,3 +742,18 @@ u = rand(m, n)-0.5;
 b = sigma / sqrt(2);
 y = mu - b * sign(u).* log(1- 2* abs(u));
 end % laprnd
+
+function add_generations_to_tree(max_level)
+% add generations to the brnaching tree plot
+grid on
+yticks(1:(max_level+1))
+yTickLabels = arrayfun(@num2str,max_level:-1:0,'uni',false);
+yticklabels(yTickLabels)
+
+box off
+ax1 = gca;  
+ax1.XAxis.Visible = 'off';
+% bg = get(gcf, 'Color');
+% axes('xcolor', bg);
+ylabel('Level (i)')
+end % end add_generations_to_tree
