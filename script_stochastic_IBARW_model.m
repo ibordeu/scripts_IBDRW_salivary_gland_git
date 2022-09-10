@@ -49,7 +49,7 @@ t_max = [84]; % maximum simuation time (h)
 seed_type = 'tree E14.5'; 
 % Other parameters
 v0 = 1; % um/h
-noise_amplitude = pi/7; % sqrt(2*D_r), with D_r the rotational.diff.const.
+noise_amplitude = pi/7; % sqrt(2*D_r), with D_r the rotational diff. const.
 sensing_angle = pi/3; % angle at which tips snese ducts
 dt = 1;
 %--------------------------------------------------------------------------
@@ -178,7 +178,7 @@ end
 % -------------------------------------------------------------------------
 
 function [new_pos,new_angle] = update_particle_position(part_pos,part_angle,dL,dt,noise_amplitude)
-part_angle(1) = part_angle(1) + 2*(rand()-0.5)*sqrt(dt)*noise_amplitude;
+part_angle(1) = part_angle(1) + 2*(rand()-0.5)*sqrt(dt)*sqrt(dt)*noise_amplitude;
 part_angle(2) = part_angle(2) + (acos(1 - 2*rand())/2-1/2)*sqrt(dt)*noise_amplitude;
 new_pos = part_pos + dL*[sin(part_angle(1))*cos(part_angle(2)) sin(part_angle(1))*sin(part_angle(2)) cos(part_angle(1))];
 new_angle = part_angle;
