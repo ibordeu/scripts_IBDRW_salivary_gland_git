@@ -10,4 +10,4 @@ Place this folder in the same directory as the script before running the script.
 script_MFT_IBARW_comoving_frame: Numerical integration of the rescaled 2d mean-field theory of the inflationary branch-ing-arresting random walk (IBARW) model.
  
 ### To run the scripts:
-Open in Matlab (tested in version 2020a and more recent releases) and pres RUN.
+Open in Matlab and pres RUN. [tested in desktop and online version 2022a]
