@@ -2,8 +2,8 @@
 % Inflationary theory of branching morphogenesis in the mouse salivary gland
 % Bordeu I, Chatzeli L, and Simons BD (2022).
 %--------------------------------------------------------------------------
-% Stochastic simulation of the three-dimensional (3d) inflationary branch-
-% ing-arresting random walk (IBARW), for uniform and isotropic tissue
+% Stochastic simulation of the three-dimensional (3d) inflationary branch
+% ing-delayed random walk (IBDRW), for uniform and isotropic tissue
 % expansion.
 %
 % See supplementary Note for details.
