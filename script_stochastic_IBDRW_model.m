@@ -73,9 +73,9 @@ for n_rep = 1:n_reps
     inactive_part_pos = [];
     inactive_part_angle = [];
 
-    init_arrested_part = 0;
-    arrested_part_number = [];
-    arrested_part_pos = [];
+    init_delayed_part = 0;
+    delayed_part_number = [];
+    delayed_part_pos = [];
     inactive_part_angle = [];
     %%
     t = 0;
@@ -99,8 +99,7 @@ for n_rep = 1:n_reps
 
         % random ordering of tip particles
         part_order = randperm(n_active_part);
-        % draw random number fto perform
-        % actions
+        % draw random number to perform actions
         ran = rand(n_active_part,1);
         active_part_number = active_part_number(part_order);
         active_part_pos = active_part_pos(part_order,:);
@@ -145,6 +144,14 @@ for n_rep = 1:n_reps
             subplot(1,2,1)
             % plot network
             plot_graph_3d(edge_list,node_positions);
+            
+            box on
+            if t == 1
+                lims = axis()*1.1*exp(expansion_rate*t_max*dt);
+            end
+            axis equal;
+            axis(lims)
+            
             hold on
             % add actie and inactive tips
             if n_inactive_part > 0
@@ -154,8 +161,9 @@ for n_rep = 1:n_reps
                 scatter3(active_part_pos(:,2),active_part_pos(:,3),active_part_pos(:,4),10,'r','filled')
             end
             hold off
-
-            axis equal; box on
+                
+            
+            
             set(gcf,'color','w'); view(2)
             title(['t = ',num2str(t),' h'])
             xlabel('\mum');ylabel('\mum');zlabel('\mum')
@@ -267,7 +275,7 @@ if h1==0 && h2==0
     n_active_part = n_active_part + 1;
 
 elseif h1==0 && h2==1
-    % If one particle is arrested, then keep one as active
+    % If one particle is delayed, then keep one as active
     tot_part_number = tot_part_number+1;
     active_part_pos(part_num,:) = [tot_part_number,new_part_pos1];
     active_part_angle(part_num,:) = [tot_part_number,new_part_angle1];
@@ -285,7 +293,7 @@ elseif h1==0 && h2==1
     n_inactive_part = n_inactive_part + 1;
 
 elseif h1==1 && h2==0
-    % If one particle is arrested, then keep one as active
+    % If one particle is delayed, then keep one as active
     tot_part_number = tot_part_number+1;
     inactive_part_pos(end+1,:) = [tot_part_number,new_part_pos1];
     inactive_part_angle(end+1,:) = [tot_part_number,new_part_angle1];
@@ -304,7 +312,7 @@ elseif h1==1 && h2==0
 
 
 elseif h1==1 && h2==1
-    % If both particles are arrested, keep both as inactive
+    % If both particles are delayed, keep both as inactive
     tot_part_number = tot_part_number+1;
     inactive_part_pos(end+1,:) = [tot_part_number,new_part_pos1];
     inactive_part_angle(end+1,:) = [tot_part_number,new_part_angle1];
