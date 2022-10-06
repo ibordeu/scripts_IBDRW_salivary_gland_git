@@ -3,7 +3,7 @@
 % Bordeu I, Chatzeli L, and Simons BD (2022).
 %--------------------------------------------------------------------------
 % Numerical integration of the rescaled 2d mean-field theory of the 
-% inflationary branch-ing-arresting random walk (IBARW) model, Eqs. (S15).
+% inflationary branching-delayed random walk (IBDRW) model, Eqs. (S15).
 %
 % See supplementary Note for details.
 %
