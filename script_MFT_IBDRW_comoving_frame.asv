@@ -19,11 +19,11 @@ clear all;close all;clc;
 rbranch = 1; % branching-to-elongation rate ratio
 rexp = rbranch/8; % expansion-to-elongation rate ratio 
 % integration parameters:
-L = [201,1]; % system size
+L = [201, 11]; % system size
 dt = 0.005; % time-step
 dx = 0.1; % grid-spacing
-N_iters = 15001; % Number of iterations
-plot_times = 1:100:15001; % times at which to show density profiles.
+N_iters = 50001; % Number of iterations
+plot_times = 1:100:9001; % times at which to show density profiles.
 % plot_times = [2000,4000,9000]; % used in the paper
 %% Main -------------------------------------------------------------------
 % Compute homogeneous steady-state solutions:
@@ -100,8 +100,8 @@ Am1p1 = circshift(Am1y,-1,2);
         
         Ap1p1(:,end) = A(:,end); Ap1p1(end,:) = A(end,:); 
         Am1m1(:,1) = A(:,1); Am1m1(1,:) = A(1,:);
-        Ap1m1(end,:) = A(end,:); Ap1m1(:,1) = A(:,1);
-        Am1p1(1,:) = A(1,:); Am1p1(:,end) = A(:,end);
+        Ap1m1(:,end) = A(:,end); Ap1m1(1,:) = A(1,:);
+%         Am1p1(:,1) = A(:,1); Am1p1(end,:) = A(end,:);
 % compute Laplacian
-nabla2A = (Am1m1+ Ap1x + Am1x + Ap1p1 - 8.*A + Ap1m1 + Am1y + Ap1y + Am1p1)/(3*dx^2);
+nabla2A = (Am1m1+ 4*Ap1x + 4*Am1x + Ap1p1 - 20.*A + Ap1m1 + 4*Am1y + 4*Ap1y + Am1p1)/(6*dx^2);
 end % end diffusion2d_9pt
