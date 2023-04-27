@@ -37,7 +37,7 @@ plot_over_time = 1; % set to 1 if want to plot simulation (set n_reps to 1)
 %% SIMULATION PARAMETERS -------------------------------------------------
 boundary_type = 'open'; 
 n_reps = 1; % number of realisations
-
+expansion_mode = 'exponential'; % 'linear' or 'exponential'
 % MODEL PARAMETERS
 sigma = 0.05; % R_branch: branching ratio
 expansion_rate = [0.006]; % R_exp: rate of expansion (h^-1)
@@ -84,15 +84,19 @@ for n_rep = 1:n_reps
     n_inactive_part = init_inactive_part;
 
     new_part_pos = [];
-
+    niterations = 0;
     while t < t_max && n_active_part>0
+        niterations = niterations+1;
         % update time
         t = t + dt;
         % expand system
         if expansion_rate > 0
-
-            [active_part_pos,inactive_part_pos,edge_list,node_positions,edge_list_clean,node_positions_clean,tot_part_number] = expand_domain(active_part_pos,inactive_part_pos,edge_list,node_positions,edge_list_clean,node_positions_clean,expansion_rate,tot_part_number,dL,dt);
-
+            switch expansion_mode
+                case 'exponential'
+                    [active_part_pos,inactive_part_pos,edge_list,node_positions,edge_list_clean,node_positions_clean,tot_part_number] = expand_domain_exponentially(active_part_pos,inactive_part_pos,edge_list,node_positions,edge_list_clean,node_positions_clean,expansion_rate,tot_part_number,dL,dt);
+                case 'linear'
+                    [active_part_pos,inactive_part_pos,edge_list,node_positions,edge_list_clean,node_positions_clean,tot_part_number] = expand_domain_linearly(active_part_pos,inactive_part_pos,edge_list,node_positions,edge_list_clean,node_positions_clean,expansion_rate,tot_part_number,dL,dt,niterations);
+            end
             % reactivation of inactive tips due to tissue expansion
             [active_part_pos,active_part_angle,active_part_number,n_active_part, inactive_part_pos,inactive_part_angle,inactive_part_number,n_inactive_part] = check_reactivated_particles(active_part_pos,active_part_angle,active_part_number,n_active_part, inactive_part_pos,inactive_part_angle,inactive_part_number,n_inactive_part,annihil_radius,node_positions,sensing_angle);
         end
@@ -530,7 +534,7 @@ end
 D = degree(G);
 end % end node_level
 
-function [active_part_pos,inactive_part_pos,edge_list,node_positions,edge_list_clean,node_positions_clean,tot_part_number] = expand_domain(active_part_pos,inactive_part_pos,edge_list,node_positions,edge_list_clean,node_positions_clean,expansion_rate,tot_part_number,dL,dt)
+function [active_part_pos,inactive_part_pos,edge_list,node_positions,edge_list_clean,node_positions_clean,tot_part_number] = expand_domain_exponentially(active_part_pos,inactive_part_pos,edge_list,node_positions,edge_list_clean,node_positions_clean,expansion_rate,tot_part_number,dL,dt)
 % here we expand the system by rescaling the location of all particles by (1+dt*expansion_rate)
 if ~isempty(edge_list)
     node_positions(:,2:4) = node_positions(:,2:4).*(1+dt*expansion_rate);
@@ -564,7 +568,37 @@ if ~isempty(edge_list)
         edge_list(r,:) = [];
     end
 end
-end % end expand_domain
+end % end expand_domain_exponentially
+
+function [active_part_pos,inactive_part_pos,edge_list,node_positions,edge_list_clean,node_positions_clean,tot_part_number] = expand_domain_linearly(active_part_pos,inactive_part_pos,edge_list,node_positions,edge_list_clean,node_positions_clean,expansion_rate,tot_part_number,dL,dt,n)
+% here we expand the system
+delta_dist_between_nodes = dt*expansion_rate;
+if ~isempty(edge_list)
+        node_positions(:,2:4) = node_positions(:,2:4).*(1+n*delta_dist_between_nodes)./(1+delta_dist_between_nodes*(n-1));
+        node_positions_clean(:,2:4) = node_positions_clean(:,2:4).*(1+n*delta_dist_between_nodes)./(1+delta_dist_between_nodes*(n-1));
+        active_part_pos(:,2:4) = active_part_pos(:,2:4).*(1+n*delta_dist_between_nodes)./(1+delta_dist_between_nodes*(n-1));
+        if ~isempty(inactive_part_pos)
+            inactive_part_pos(:,2:4) = inactive_part_pos(:,2:4).*(1+n*delta_dist_between_nodes)./(1+delta_dist_between_nodes*(n-1));
+        end
+    % add intermediate nodes if distance between nodes is larger than 1
+    edge_list(:,3) = edge_list(:,3).*(1+n*delta_dist_between_nodes)./(1+delta_dist_between_nodes*(n-1));
+    edge_list_clean(:,3) = edge_list_clean(:,3).*(1+n*delta_dist_between_nodes)./(1+delta_dist_between_nodes*(n-1));
+    r = find(edge_list(:,3) > dL);
+    if ~isempty(r)
+        n1 = edge_list(r,1);
+        n2 = edge_list(r,2);
+        d = edge_list(r,3);
+        
+        new_parts_num = [(tot_part_number + 1):(tot_part_number+length(r))]';
+        tot_part_number = tot_part_number + length(r);
+        edge_list(end+1:end+length(r),:) = [n1 new_parts_num d/2];
+        edge_list(end+1:end+length(r),:) = [new_parts_num n2 d/2];
+        pos_new = (node_positions(n1,2:4) + node_positions(n2,2:4))/2;
+        node_positions(new_parts_num,:) = [new_parts_num pos_new];
+    edge_list(r,:) = [];
+    end
+end
+end %expand_domain_linearly
 
 function [active_part_pos,active_part_angle,active_part_number,n_active_part, inactive_part_pos,inactive_part_angle,inactive_part_number,n_inactive_part] = check_reactivated_particles(active_part_pos,active_part_angle,active_part_number,n_active_part, inactive_part_pos,inactive_part_angle,inactive_part_number,n_inactive_part,annihil_radius,node_positions,sensing_angle)
 if n_inactive_part > 0
