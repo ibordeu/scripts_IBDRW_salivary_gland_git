@@ -62,7 +62,7 @@ truncated = truncate(untruncated,50,150); % used in simulations
 
 % Distribution of roll angles (phi): mean and SD (sqrt(2)b) for the Laplace distirbution 
 mean_lap = 90;
-std_lap = sqrt(2)*21;
+std_lap = sqrt(2)*24;
 
 for n_rep = 1:n_reps
     main_lengths = [];
