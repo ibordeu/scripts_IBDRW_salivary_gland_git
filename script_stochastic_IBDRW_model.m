@@ -113,7 +113,7 @@ for n_rep = 1:n_reps
         for part_num = n_active_part:-1:1
             % choose a tip cell to elongate or branch
 
-            if ~isempty(edge_list) && ran(part_num) <= pbranch % tip branch
+            if ~isempty(edge_list) && ran(part_num) < pbranch % tip branch
                 % find location and angle of tip to branch
                 part_pos = active_part_pos(part_num,2:end);
                 part_angle = active_part_angle(part_num,2:end);
