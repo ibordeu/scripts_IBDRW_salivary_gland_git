@@ -51,7 +51,7 @@ seed_type = 'tree E14.5';
 v0 = 1; % um/h
 noise_amplitude = pi/7; % sqrt(2*D_r), with D_r the rotational diff. const.
 sensing_angle = pi/3; % angle at which tips snese ducts
-dt = 1;
+dt = 0.1;
 %--------------------------------------------------------------------------
 dL = dt*v0;
 
@@ -89,6 +89,7 @@ for n_rep = 1:n_reps
         niterations = niterations+1;
         % update time
         t = t + dt;
+        pbranch = 1-exp(-sigma*dt); % pbracnh = 1 - exp(-sigma)
         % expand system
         if expansion_rate > 0
             switch expansion_mode
@@ -112,17 +113,7 @@ for n_rep = 1:n_reps
         for part_num = n_active_part:-1:1
             % choose a tip cell to elongate or branch
 
-            if isempty(edge_list) || ran(part_num) <= 1/(1+sigma) % tip elongation
-                % find location and angle of tip to branch
-                part_pos = active_part_pos(part_num,2:end);
-                part_angle = active_part_angle(part_num,2:end);
-                % compute new location of the tip
-                [new_part_pos, new_part_angle] = update_particle_position(part_pos,part_angle,dL,dt,noise_amplitude);
-                % check distance of particle to ducts
-                h = check_distance_to_trace(part_pos,new_part_pos,annihil_radius,node_positions,sensing_angle);
-                % update location in list
-                [edge_list,node_positions,edge_list_clean,node_positions_clean,active_part_pos,active_part_angle,active_part_number,n_active_part,inactive_part_pos,inactive_part_angle,inactive_part_number,n_inactive_part,tot_part_number] = add_particle(h,edge_list,node_positions,edge_list_clean,node_positions_clean,active_part_pos,active_part_angle,active_part_number,n_active_part,inactive_part_pos,inactive_part_angle,inactive_part_number,n_inactive_part,tot_part_number,part_num,new_part_pos,new_part_angle);
-            else % branch
+            if ~isempty(edge_list) && ran(part_num) <= pbranch % tip branch
                 % find location and angle of tip to branch
                 part_pos = active_part_pos(part_num,2:end);
                 part_angle = active_part_angle(part_num,2:end);
@@ -140,7 +131,16 @@ for n_rep = 1:n_reps
                 h2 = check_distance_to_trace(part_pos,new_part_pos2,annihil_radius,node_positions,sensing_angle);
                 % add new tips to list
                 [edge_list,node_positions,edge_list_clean,node_positions_clean,active_part_pos,active_part_angle,active_part_number,n_active_part,inactive_part_pos,inactive_part_angle,inactive_part_number,n_inactive_part,tot_part_number] = add_two_particles(h1,h2,edge_list,node_positions,edge_list_clean,node_positions_clean,active_part_pos,active_part_angle,active_part_number,n_active_part,inactive_part_pos,inactive_part_angle,inactive_part_number,n_inactive_part,tot_part_number,part_num,new_part_pos1,new_part_angle1,new_part_pos2,new_part_angle2,dL);
-
+            else % elongate
+                % find location and angle of tip to branch
+                part_pos = active_part_pos(part_num,2:end);
+                part_angle = active_part_angle(part_num,2:end);
+                % compute new location of the tip
+                [new_part_pos, new_part_angle] = update_particle_position(part_pos,part_angle,dL,dt,noise_amplitude);
+                % check distance of particle to ducts
+                h = check_distance_to_trace(part_pos,new_part_pos,annihil_radius,node_positions,sensing_angle);
+                % update location in list
+                [edge_list,node_positions,edge_list_clean,node_positions_clean,active_part_pos,active_part_angle,active_part_number,n_active_part,inactive_part_pos,inactive_part_angle,inactive_part_number,n_inactive_part,tot_part_number] = add_particle(h,edge_list,node_positions,edge_list_clean,node_positions_clean,active_part_pos,active_part_angle,active_part_number,n_active_part,inactive_part_pos,inactive_part_angle,inactive_part_number,n_inactive_part,tot_part_number,part_num,new_part_pos,new_part_angle);
             end
         end
 
@@ -150,7 +150,7 @@ for n_rep = 1:n_reps
             plot_graph_3d(edge_list,node_positions);
             
             box on
-            if t == 1
+            if niterations == 1
                 lims = axis()*1.1*exp(expansion_rate*t_max*dt);
             end
             axis equal;
